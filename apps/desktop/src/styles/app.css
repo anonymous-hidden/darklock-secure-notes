@@ -1,0 +1,29 @@
+@import '../../../web/src/styles/app.css';
+
+/* Desktop-specific overrides */
+.desktop-app {
+  /* Custom title bar drag region */
+}
+
+.desktop-titlebar-drag {
+  height: 32px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  -webkit-app-region: drag;
+  pointer-events: none;
+}
+
+/* Shift topbar down to accommodate Tauri title bar drag region */
+.desktop-app .topbar {
+  padding-top: 32px;
+}
+
+/* Windows: no rounded corners on the root */
+@media (prefers-color-scheme: dark) {
+  .desktop-app {
+    border-radius: 0;
+  }
+}

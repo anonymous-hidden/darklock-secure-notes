@@ -1,0 +1,177 @@
+/**
+ * @darklock/ui - Shared theme system
+ * 
+ * Darklock design tokens as CSS custom properties.
+ * Used across desktop, web, and any future platforms.
+ */
+
+:root {
+  /* === DARKLOCK COLOR PALETTE === */
+  --dl-bg-primary: #0a0a0f;
+  --dl-bg-secondary: #12121a;
+  --dl-bg-tertiary: #1a1a25;
+  --dl-bg-surface: #1e1e2a;
+  --dl-bg-surface-hover: #252535;
+  --dl-bg-surface-active: #2a2a3d;
+  --dl-bg-input: #16161f;
+  --dl-bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Borders */
+  --dl-border: #2a2a3d;
+  --dl-border-subtle: #1e1e2a;
+  --dl-border-focus: #6366f1;
+  --dl-border-danger: #ef4444;
+
+  /* Text */
+  --dl-text-primary: #f1f5f9;
+  --dl-text-secondary: #94a3b8;
+  --dl-text-tertiary: #64748b;
+  --dl-text-muted: #475569;
+  --dl-text-inverse: #0a0a0f;
+
+  /* Accents */
+  --dl-accent: #6366f1;
+  --dl-accent-hover: #818cf8;
+  --dl-accent-active: #4f46e5;
+  --dl-accent-muted: rgba(99, 102, 241, 0.15);
+  --dl-accent-text: #a5b4fc;
+
+  /* Status */
+  --dl-success: #22c55e;
+  --dl-success-bg: rgba(34, 197, 94, 0.1);
+  --dl-warning: #eab308;
+  --dl-warning-bg: rgba(234, 179, 8, 0.1);
+  --dl-danger: #ef4444;
+  --dl-danger-bg: rgba(239, 68, 68, 0.1);
+  --dl-info: #3b82f6;
+  --dl-info-bg: rgba(59, 130, 246, 0.1);
+
+  /* Security indicator */
+  --dl-encrypted: #22c55e;
+  --dl-encrypted-bg: rgba(34, 197, 94, 0.08);
+  --dl-locked: #eab308;
+  --dl-synced: #22c55e;
+  --dl-syncing: #3b82f6;
+  --dl-offline: #64748b;
+
+  /* Typography */
+  --dl-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --dl-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --dl-font-size-xs: 0.75rem;
+  --dl-font-size-sm: 0.875rem;
+  --dl-font-size-base: 1rem;
+  --dl-font-size-lg: 1.125rem;
+  --dl-font-size-xl: 1.25rem;
+  --dl-font-size-2xl: 1.5rem;
+  --dl-font-size-3xl: 1.875rem;
+
+  /* Spacing */
+  --dl-space-xs: 4px;
+  --dl-space-sm: 8px;
+  --dl-space-md: 12px;
+  --dl-space-lg: 16px;
+  --dl-space-xl: 24px;
+  --dl-space-2xl: 32px;
+  --dl-space-3xl: 48px;
+
+  /* Radius */
+  --dl-radius-sm: 4px;
+  --dl-radius-md: 8px;
+  --dl-radius-lg: 12px;
+  --dl-radius-xl: 16px;
+  --dl-radius-full: 9999px;
+
+  /* Shadows */
+  --dl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --dl-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --dl-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --dl-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --dl-transition-fast: 100ms ease;
+  --dl-transition: 200ms ease;
+  --dl-transition-slow: 300ms ease;
+
+  /* Layout */
+  --dl-sidebar-width: 240px;
+  --dl-notelist-width: 300px;
+  --dl-topbar-height: 48px;
+  --dl-tools-sidebar-width: 280px;
+}
+
+/* === GLOBAL RESETS === */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--dl-font-sans);
+  font-size: var(--dl-font-size-base);
+  color: var(--dl-text-primary);
+  background: var(--dl-bg-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--dl-accent-text);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--dl-accent-hover);
+}
+
+::selection {
+  background: var(--dl-accent-muted);
+  color: var(--dl-text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dl-border);
+  border-radius: var(--dl-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dl-text-tertiary);
+}
+
+/* === UTILITY CLASSES === */
+
+.dl-flex { display: flex; }
+.dl-flex-col { display: flex; flex-direction: column; }
+.dl-flex-row { display: flex; flex-direction: row; }
+.dl-items-center { align-items: center; }
+.dl-justify-center { justify-content: center; }
+.dl-justify-between { justify-content: space-between; }
+.dl-gap-xs { gap: var(--dl-space-xs); }
+.dl-gap-sm { gap: var(--dl-space-sm); }
+.dl-gap-md { gap: var(--dl-space-md); }
+.dl-gap-lg { gap: var(--dl-space-lg); }
+.dl-gap-xl { gap: var(--dl-space-xl); }
+.dl-flex-1 { flex: 1; }
+.dl-min-w-0 { min-width: 0; }
+.dl-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-text-sm { font-size: var(--dl-font-size-sm); }
+.dl-text-xs { font-size: var(--dl-font-size-xs); }
+.dl-text-secondary { color: var(--dl-text-secondary); }
+.dl-text-muted { color: var(--dl-text-muted); }

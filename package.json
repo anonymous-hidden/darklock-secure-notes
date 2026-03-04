@@ -1,0 +1,31 @@
+{
+  "name": "darklock-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Darklock Secure Notes - End-to-end encrypted notes platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:desktop": "npm run dev --workspace=apps/desktop",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:server": "npm run build --workspace=apps/server",
+    "build:desktop": "npm run build --workspace=apps/desktop",
+    "build:crypto": "npm run build --workspace=packages/crypto",
+    "build:ui": "npm run build --workspace=packages/ui",
+    "build:all": "npm run build:crypto && npm run build:ui && npm run build:server && npm run build:web",
+    "test": "npm run test --workspaces --if-present",
+    "test:crypto": "npm run test --workspace=packages/crypto",
+    "test:server": "npm run test --workspace=apps/server",
+    "test:integration": "npm run test:integration --workspace=apps/server",
+    "lint": "npm run lint --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "PROPRIETARY"
+}
