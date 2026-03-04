@@ -3,7 +3,9 @@
 End-to-end encrypted, zero-knowledge note-taking app for Linux, Windows, and Web.
 Built with React 18, Tauri v2, and XChaCha20-Poly1305 encryption via libsodium.
 
-> **Version:** 0.1.0 &nbsp;|&nbsp; **Status:** Active Development &nbsp;|&nbsp; **License:** Proprietary — Darklock Security
+> **Version:** 0.1.0 &nbsp;|&nbsp; **Status:** Active Development &nbsp;|&nbsp; **License:** MIT
+
+**Darklock Secure Notes is open source.** The hosted service is run and maintained by Darklock Security at **[darklock.net](https://darklock.net)** — you don't need to run anything yourself to use it.
 
 ---
 
@@ -14,7 +16,8 @@ Built with React 18, Tauri v2, and XChaCha20-Poly1305 encryption via libsodium.
 - [Security Design](#security-design)
 - [Screens & Pages](#screens--pages)
 - [Tech Stack](#tech-stack)
-- [Quick Start](#quick-start)
+- [Use Darklock](#use-darklock)
+- [For Contributors](#for-contributors)
 - [Package Overview](#package-overview)
 - [Design System](#design-system)
 - [Security Audit](#security-audit)
@@ -200,7 +203,22 @@ See [SECURITY.md](./SECURITY.md) for the full threat model and crypto specificat
 
 ---
 
-## Quick Start
+## Use Darklock
+
+The easiest way to use Darklock Secure Notes is through the hosted service at **[darklock.net](https://darklock.net)**. No setup required.
+
+| Platform | Link |
+|----------|------|
+| **Web** | [darklock.net](https://darklock.net) |
+| **Desktop (Linux / Windows)** | Download from [darklock.net/download](https://darklock.net/download) |
+
+Your vault is end-to-end encrypted — Darklock never sees your notes, titles, or master password.
+
+---
+
+## For Contributors
+
+This repo is the full source of the app. PRs and issues are welcome.
 
 ### Prerequisites
 
@@ -211,7 +229,7 @@ See [SECURITY.md](./SECURITY.md) for the full threat model and crypto specificat
 ### Install
 
 ```bash
-git clone <repo-url> darklock-notes
+git clone https://github.com/anonymous-hidden/darklock-secure-notes.git
 cd darklock-notes
 npm install
 ```
@@ -443,4 +461,4 @@ Full vulnerability assessment conducted on the codebase. Findings and applied fi
 
 ---
 
-**&copy; 2026 Darklock Security** — All rights reserved.
+**&copy; 2026 Darklock Security** — Released under the [MIT License](LICENSE). Hosted at [darklock.net](https://darklock.net).
