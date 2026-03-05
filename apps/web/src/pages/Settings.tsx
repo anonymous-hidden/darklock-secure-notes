@@ -21,6 +21,7 @@ const BellIcon = () => (<svg width="15" height="15" viewBox="0 0 15 15" fill="no
 const DataIcon = () => (<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><ellipse cx="7.5" cy="4" rx="5" ry="2" stroke="currentColor" strokeWidth="1.1" /><path d="M2.5 4v3.5c0 1.1 2.24 2 5 2s5-.9 5-2V4" stroke="currentColor" strokeWidth="1.1" /><path d="M2.5 7.5V11c0 1.1 2.24 2 5 2s5-.9 5-2V7.5" stroke="currentColor" strokeWidth="1.1" /></svg>);
 const AccessIcon = () => (<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" strokeWidth="1.1" /><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.1" /><path d="M7.5 1.5v2M7.5 11.5v2M1.5 7.5h2M11.5 7.5h2" stroke="currentColor" strokeWidth="1" strokeLinecap="round" /></svg>);
 const GearIcon = () => (<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.1" /><path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M3 3l1.06 1.06M10.94 10.94L12 12M3 12l1.06-1.06M10.94 4.06L12 3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" /></svg>);
+const SyncIcon = () => (<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M11 3.5L13 5.5 11 7.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" /><path d="M2 5.5h11" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" /><path d="M4 11.5L2 9.5 4 7.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" /><path d="M13 9.5H2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" /></svg>);
 const LockIcon = () => (<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="3" y="6" width="7" height="5" rx="1.5" stroke="currentColor" strokeWidth="1.1" /><path d="M4.5 6V4.5a2 2 0 0 1 4 0V6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" /></svg>);
 const ExportIcon = () => (<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5v7M4 6l3 3 3-3M2.5 10.5v1.5h9v-1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
 const ImportIcon = () => (<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 8.5v-7M4 5l3-3 3 3M2.5 10.5v1.5h9v-1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
@@ -68,11 +69,11 @@ export const Settings: React.FC = () => {
 
   const tabConfig: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
     { id: 'profile', label: 'Profile', icon: <UserIcon /> },
-    { id: 'app', label: 'Editor', icon: <EditorIcon /> },
+    { id: 'editor', label: 'Editor', icon: <EditorIcon /> },
     { id: 'security', label: 'Security', icon: <ShieldIcon /> },
-    { id: 'shortcuts', label: 'Shortcuts', icon: <KeyboardIcon /> },
-    { id: 'notifications', label: 'Alerts', icon: <BellIcon /> },
     { id: 'data', label: 'Data', icon: <DataIcon /> },
+    { id: 'sync', label: 'Sync', icon: <SyncIcon /> },
+    { id: 'shortcuts', label: 'Shortcuts', icon: <KeyboardIcon /> },
     { id: 'accessibility', label: 'Access.', icon: <AccessIcon /> },
     { id: 'advanced', label: 'Advanced', icon: <GearIcon /> },
   ];
@@ -99,11 +100,11 @@ export const Settings: React.FC = () => {
         </div>
         <div className="settings-content" style={{ flex: 1, padding: '32px 40px', overflowY: 'auto', animation: 'dl-fadeIn 0.3s ease', maxWidth: '640px' }}>
           {settingsTab === 'profile' && <ProfileTab />}
-          {settingsTab === 'app' && <EditorTab />}
+          {settingsTab === 'editor' && <EditorTab />}
           {settingsTab === 'security' && <SecurityTab />}
-          {settingsTab === 'shortcuts' && <ShortcutsTab />}
-          {settingsTab === 'notifications' && <NotificationsTab />}
           {settingsTab === 'data' && <DataTab />}
+          {settingsTab === 'sync' && <SyncSettingsTab />}
+          {settingsTab === 'shortcuts' && <ShortcutsTab />}
           {settingsTab === 'accessibility' && <AccessibilityTab />}
           {settingsTab === 'advanced' && <AdvancedTab />}
         </div>

@@ -25,6 +25,18 @@ pub fn run() {
             // Ensure data directory exists
             let data_dir = commands::resolve_data_dir(app.handle());
             std::fs::create_dir_all(&data_dir).ok();
+
+            // Set window icon explicitly (ensures it shows in taskbar during dev)
+            if let Some(window) = app.get_webview_window("main") {
+                let icon_bytes = include_bytes!("../icons/icon.png");
+                if let Ok(img) = image::load_from_memory(icon_bytes) {
+                    let rgba = img.into_rgba8();
+                    let (w, h) = rgba.dimensions();
+                    let icon = tauri::image::Image::new_owned(rgba.into_raw(), w, h);
+                    window.set_icon(icon).ok();
+                }
+            }
+
             Ok(())
         })
         .run(tauri::generate_context!())

@@ -9,7 +9,7 @@
 
 import React, { useEffect } from 'react';
 import { useAppStore } from './stores/appStore';
-import { SetupWizard, UnlockScreen, Library, Workspace, Settings } from './pages';
+import { SetupWizard, UnlockScreen, Library, Workspace, Settings, Collaborators, Trash, Charts, Search, Sharing, Sync } from './pages';
 import { CommandPalette } from '@darklock/ui';
 import { cryptoService } from '../../web/src/services/crypto';
 
@@ -18,10 +18,12 @@ import { cryptoService } from '../../web/src/services/crypto';
 
 const buildCommands = (store: ReturnType<typeof useAppStore.getState>) => [
   { id: 'new-note', label: 'New Note', shortcut: 'Ctrl+N', action: () => store.setScreen('workspace') },
-  { id: 'search', label: 'Search Notes', shortcut: 'Ctrl+F', action: () => {} },
+  { id: 'search', label: 'Search Notes', shortcut: 'Ctrl+Shift+F', action: () => store.setScreen('search') },
   { id: 'library', label: 'Go to Library', shortcut: 'Ctrl+L', action: () => store.setScreen('library') },
+  { id: 'sharing', label: 'Manage Sharing', action: () => store.setScreen('sharing') },
+  { id: 'sync', label: 'Sync Status', action: () => store.setScreen('sync') },
   { id: 'settings', label: 'Open Settings', action: () => store.setScreen('settings') },
-  { id: 'lock', label: 'Lock Vault', action: () => { cryptoService.lock(); store.lockApp(); } },
+  { id: 'lock', label: 'Lock Vault', shortcut: 'Ctrl+Shift+L', action: () => { cryptoService.lock(); store.lockApp(); } },
   { id: 'toggle-sidebar', label: 'Toggle Sidebar', action: () => store.toggleNav() },
 ];
 
@@ -66,6 +68,8 @@ export const App: React.FC = () => {
       if (isLocked) return;
       if (ctrl && e.key === 'n') { e.preventDefault(); useAppStore.getState().setScreen('workspace'); }
       if (ctrl && e.key === 'l') { e.preventDefault(); useAppStore.getState().setScreen('library'); }
+      if (ctrl && e.shiftKey && e.key === 'L') { e.preventDefault(); cryptoService.lock(); useAppStore.getState().lockApp(); }
+      if (ctrl && e.shiftKey && e.key === 'F') { e.preventDefault(); useAppStore.getState().setScreen('search'); }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -78,6 +82,12 @@ export const App: React.FC = () => {
       case 'library': return <Library />;
       case 'workspace': return <Workspace />;
       case 'settings': return <Settings />;
+      case 'collaborators': return <Collaborators />;
+      case 'trash': return <Trash />;
+      case 'charts': return <Charts />;
+      case 'search': return <Search />;
+      case 'sharing': return <Sharing />;
+      case 'sync': return <Sync />;
       default: return <Library />;
     }
   };

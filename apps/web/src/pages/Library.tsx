@@ -1,12 +1,12 @@
 /**
- * Darklock Secure Notes — Library Screen
+ * Darklock Secure Notes — Library Screen (Hub)
  *
- * Premium section card grid with subtle gradients, hover-lift,
- * accent top-bar on hover, and a polished empty-state illustration.
+ * Main landing page after unlock. Shows section grid + quick-access
+ * cards for Teams, Charts, Trash, and Settings.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAppStore } from '../stores/appStore';
+import { useAppStore, AppScreen } from '../stores/appStore';
 import { Button, Input, Modal, Spinner, Badge } from '@darklock/ui';
 import { api } from '../services/api';
 import { cryptoService } from '../services/crypto';
@@ -59,6 +59,53 @@ const NoteIcon = () => (
     <path d="M7 2v3h3" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
   </svg>
 );
+
+const TeamNavIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <circle cx="6.5" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+    <circle cx="12.5" cy="6" r="2" stroke="currentColor" strokeWidth="1.2" />
+    <path d="M2 15c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
+const ChartNavIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <rect x="2" y="9" width="3.5" height="6" rx="0.8" stroke="currentColor" strokeWidth="1.2" />
+    <rect x="7.25" y="5" width="3.5" height="10" rx="0.8" stroke="currentColor" strokeWidth="1.2" />
+    <rect x="12.5" y="3" width="3.5" height="12" rx="0.8" stroke="currentColor" strokeWidth="1.2" />
+  </svg>
+);
+
+const TrashNavIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M3 5h12M6 5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V5M5 5l.5 9.5a1.5 1.5 0 0 0 1.5 1.5h4a1.5 1.5 0 0 0 1.5-1.5L13 5"
+      stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SettingsNavIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+    <path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.4 3.4l1.4 1.4M13.2 13.2l1.4 1.4M3.4 14.6l1.4-1.4M13.2 4.8l1.4-1.4"
+      stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
+/* ── Quick‑access card definitions ────────────────────────────── */
+interface QuickCard {
+  label: string;
+  screen: AppScreen;
+  icon: React.ReactNode;
+  color: string;
+  description: string;
+}
+
+const quickCards: QuickCard[] = [
+  { label: 'Teams', screen: 'collaborators', icon: <TeamNavIcon />, color: '#818cf8', description: 'Collaborate & share' },
+  { label: 'Charts', screen: 'charts', icon: <ChartNavIcon />, color: '#34d399', description: 'Visualize data' },
+  { label: 'Trash', screen: 'trash', icon: <TrashNavIcon />, color: '#fb923c', description: 'Recover deleted notes' },
+  { label: 'Settings', screen: 'settings', icon: <SettingsNavIcon />, color: '#94a3b8', description: 'Preferences & security' },
+];
 
 /* ── Component ─────────────────────────────────────────────────── */
 export const Library: React.FC = () => {
@@ -247,6 +294,28 @@ export const Library: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* ── Quick Access ──────────────────────────────────────── */}
+        <div className="library-quick-access">
+          <h2 className="library-quick-title">Quick Access</h2>
+          <div className="library-quick-grid">
+            {quickCards.map((card) => (
+              <button
+                key={card.screen}
+                className="library-quick-card"
+                onClick={() => setScreen(card.screen)}
+              >
+                <div className="library-quick-icon" style={{ color: card.color }}>
+                  {card.icon}
+                </div>
+                <div className="library-quick-info">
+                  <span className="library-quick-label">{card.label}</span>
+                  <span className="library-quick-desc">{card.description}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* ── New Section Modal ──────────────────────────────────── */}

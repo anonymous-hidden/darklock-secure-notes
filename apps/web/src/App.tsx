@@ -14,6 +14,9 @@ import { Settings } from './pages/Settings';
 import { Collaborators } from './pages/Collaborators';
 import { Trash } from './pages/Trash';
 import { Charts } from './pages/Charts';
+import { Search } from './pages/Search';
+import { Sharing } from './pages/Sharing';
+import { Sync } from './pages/Sync';
 import { CommandPalette } from '@darklock/ui';
 import { cryptoService } from './services/crypto';
 
@@ -24,10 +27,12 @@ const buildCommands = (
   store: ReturnType<typeof useAppStore.getState>,
 ) => [
   { id: 'new-note', label: 'New Note', shortcut: 'Ctrl+N', action: () => { /* dispatched below */ } },
-  { id: 'search', label: 'Search Notes', shortcut: 'Ctrl+F', action: () => store.setScreen('workspace') },
+  { id: 'search', label: 'Search Notes', shortcut: 'Ctrl+Shift+F', action: () => store.setScreen('search') },
   { id: 'library', label: 'Go to Library', shortcut: 'Ctrl+L', action: () => store.setScreen('library') },
+  { id: 'sharing', label: 'Manage Sharing', action: () => store.setScreen('sharing') },
+  { id: 'sync', label: 'Sync Status', action: () => store.setScreen('sync') },
   { id: 'settings', label: 'Open Settings', action: () => store.setScreen('settings') },
-  { id: 'lock', label: 'Lock Vault', action: () => { cryptoService.lock(); store.lockApp(); } },
+  { id: 'lock', label: 'Lock Vault', shortcut: 'Ctrl+Shift+L', action: () => { cryptoService.lock(); store.lockApp(); } },
   { id: 'toggle-sidebar', label: 'Toggle Sidebar', action: () => store.toggleNav() },
   { id: 'toggle-tools', label: 'Toggle Tools Panel', action: () => store.toggleToolsSidebar() },
 ];
@@ -78,6 +83,19 @@ export const App: React.FC = () => {
       if (ctrl && e.key === 'l') {
         e.preventDefault();
         useAppStore.getState().setScreen('library');
+      }
+
+      // Ctrl+Shift+L — Lock vault
+      if (ctrl && e.shiftKey && e.key === 'L') {
+        e.preventDefault();
+        cryptoService.lock();
+        useAppStore.getState().lockApp();
+      }
+
+      // Ctrl+Shift+F — Global search
+      if (ctrl && e.shiftKey && e.key === 'F') {
+        e.preventDefault();
+        useAppStore.getState().setScreen('search');
       }
     },
     [isLocked, toggleCommandPalette],
@@ -145,6 +163,12 @@ export const App: React.FC = () => {
         return <Trash />;
       case 'charts':
         return <Charts />;
+      case 'search':
+        return <Search />;
+      case 'sharing':
+        return <Sharing />;
+      case 'sync':
+        return <Sync />;
       default:
         return <Library />;
     }

@@ -19,6 +19,20 @@
 /* Shift topbar down to accommodate Tauri title bar drag region */
 .desktop-app .topbar {
   padding-top: 32px;
+  padding-bottom: 8px;
+  height: 70px;
+  /* The .desktop-titlebar-drag div handles window dragging.
+     Disable drag on the topbar itself so buttons stay clickable. */
+  -webkit-app-region: no-drag;
+}
+
+/* Ensure all topbar children are also clickable (belt-and-suspenders) */
+.desktop-app .topbar *,
+.desktop-app .topbar button,
+.desktop-app .topbar input,
+.desktop-app .topbar a,
+.desktop-app .topbar select {
+  -webkit-app-region: no-drag;
 }
 
 /* Windows: no rounded corners on the root */

@@ -45,11 +45,78 @@ export interface Vault {
   createdAt: string;
 }
 
-export type AppScreen = 'setup' | 'unlock' | 'library' | 'workspace' | 'settings' | 'collaborators' | 'trash' | 'charts';
+export type AppScreen = 'setup' | 'unlock' | 'library' | 'workspace' | 'search' | 'sharing' | 'sync' | 'settings' | 'collaborators' | 'trash' | 'charts';
 export type SetupStep = 'choose-mode' | 'cloud-signin' | 'cloud-signup' | 'local-create' | 'finish';
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error';
-export type SettingsTab = 'profile' | 'app' | 'security' | 'shortcuts' | 'notifications' | 'data' | 'accessibility' | 'advanced';
+export type SettingsTab = 'profile' | 'editor' | 'security' | 'data' | 'sync' | 'shortcuts' | 'accessibility' | 'advanced';
 export type ToolsTab = 'outline' | 'backlinks' | 'graph' | 'attachments' | 'revisions' | 'charts' | 'contributors';
+export type ConflictPolicy = 'auto-merge' | 'conflict-copy' | 'last-write-wins';
+export type ShareRole = 'owner' | 'editor' | 'viewer';
+export type ShareStatus = 'active' | 'pending' | 'revoked' | 'expired';
+
+export interface ShareRecipient {
+  id: string;
+  email: string;
+  displayName: string;
+  role: ShareRole;
+  status: ShareStatus;
+  addedAt: string;
+  publicKeyId?: string;
+}
+
+export interface SharedResource {
+  id: string;
+  resourceType: 'note' | 'section';
+  resourceId: string;
+  resourceName: string;
+  recipients: ShareRecipient[];
+  createdAt: string;
+  expiresAt?: string;
+  permissions: { canEdit: boolean; canShare: boolean; canExport: boolean };
+}
+
+export interface SyncDevice {
+  id: string;
+  name: string;
+  platform: 'desktop' | 'web' | 'mobile';
+  lastSeen: string;
+  isCurrentDevice: boolean;
+}
+
+export interface SyncConflict {
+  id: string;
+  noteId: string;
+  noteTitle: string;
+  localVersion: number;
+  remoteVersion: number;
+  createdAt: string;
+  resolved: boolean;
+}
+
+export interface NoteRevision {
+  id: string;
+  noteId: string;
+  version: number;
+  createdAt: string;
+  deviceName: string;
+  sizeBytes: number;
+}
+
+export interface SavedSearch {
+  id: string;
+  label: string;
+  query: string;
+  filters: SearchFilters;
+  createdAt: string;
+}
+
+export interface SearchFilters {
+  sectionIds: string[];
+  tags: string[];
+  dateRange: { from?: string; to?: string };
+  pinned?: boolean;
+  shared?: boolean;
+}
 
 /* Collaboration types */
 export type CollabRole = 'owner' | 'editor' | 'viewer';
@@ -73,6 +140,30 @@ export interface SharedNote {
   collaborators: Collaborator[];
   sharedAt: string;
   permissions: { canEdit: boolean; canShare: boolean; canDelete: boolean };
+}
+
+/* Team types */
+export type TeamRole = 'owner' | 'admin' | 'member';
+
+export interface TeamMember {
+  id: string;
+  displayName: string;
+  email: string;
+  role: TeamRole;
+  joinedAt: string;
+  lastSeen?: string;
+  avatar?: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  inviteCode: string;
+  description?: string;
+  memberCount: number;
+  members: TeamMember[];
+  createdAt: string;
+  ownerId: string;
 }
 
 /* Chart types */
@@ -140,8 +231,32 @@ interface AppState {
   sharedNotes: SharedNote[];
   pendingInvites: number;
 
+  // Teams
+  teams: Team[];
+  activeTeamId: string | null;
+  showCreateTeamModal: boolean;
+  showJoinTeamModal: boolean;
+
   // Charts
   charts: ChartData[];
+
+  // Sharing
+  sharedResources: SharedResource[];
+  activeShareId: string | null;
+  showShareInviteModal: boolean;
+  showRevokeConfirm: boolean;
+
+  // Sync
+  syncDevices: SyncDevice[];
+  syncConflicts: SyncConflict[];
+  noteRevisions: NoteRevision[];
+  conflictPolicy: ConflictPolicy;
+  showConflictResolver: boolean;
+
+  // Search
+  savedSearches: SavedSearch[];
+  searchFilters: SearchFilters;
+  searchResultIds: string[];
 
   // Preferences (persisted conceptually)
   theme: 'dark' | 'light' | 'system';
@@ -220,11 +335,42 @@ interface AppState {
   setSharedNotes: (notes: SharedNote[]) => void;
   setPendingInvites: (n: number) => void;
 
+  // Team actions
+  setTeams: (teams: Team[]) => void;
+  addTeam: (team: Team) => void;
+  removeTeam: (id: string) => void;
+  updateTeam: (id: string, updates: Partial<Team>) => void;
+  setActiveTeam: (id: string | null) => void;
+  setShowCreateTeamModal: (v: boolean) => void;
+  setShowJoinTeamModal: (v: boolean) => void;
+
   // Chart actions
   setCharts: (charts: ChartData[]) => void;
   addChart: (chart: ChartData) => void;
   removeChart: (id: string) => void;
   updateChart: (id: string, updates: Partial<ChartData>) => void;
+
+  // Sharing actions
+  setSharedResources: (resources: SharedResource[]) => void;
+  addSharedResource: (resource: SharedResource) => void;
+  removeSharedResource: (id: string) => void;
+  setActiveShare: (id: string | null) => void;
+  setShowShareInviteModal: (v: boolean) => void;
+  setShowRevokeConfirm: (v: boolean) => void;
+
+  // Sync actions
+  setSyncDevices: (devices: SyncDevice[]) => void;
+  setSyncConflicts: (conflicts: SyncConflict[]) => void;
+  setNoteRevisions: (revisions: NoteRevision[]) => void;
+  setConflictPolicy: (policy: ConflictPolicy) => void;
+  setShowConflictResolver: (v: boolean) => void;
+
+  // Search actions
+  setSavedSearches: (searches: SavedSearch[]) => void;
+  addSavedSearch: (search: SavedSearch) => void;
+  removeSavedSearch: (id: string) => void;
+  setSearchFilters: (filters: SearchFilters) => void;
+  setSearchResultIds: (ids: string[]) => void;
 
   // Preference actions
   setTheme: (theme: 'dark' | 'light' | 'system') => void;
@@ -268,7 +414,7 @@ export const useAppStore = create<AppState>((set) => ({
   storageMode: null,
   screen: 'setup',
   setupStep: 'choose-mode',
-  settingsTab: 'profile',
+  settingsTab: 'profile' as SettingsTab,
   toolsTab: 'outline',
   vaults: [],
   sections: [],
@@ -298,8 +444,32 @@ export const useAppStore = create<AppState>((set) => ({
   sharedNotes: [],
   pendingInvites: 0,
 
+  // Teams
+  teams: [],
+  activeTeamId: null,
+  showCreateTeamModal: false,
+  showJoinTeamModal: false,
+
   // Charts
   charts: [],
+
+  // Sharing
+  sharedResources: [],
+  activeShareId: null,
+  showShareInviteModal: false,
+  showRevokeConfirm: false,
+
+  // Sync
+  syncDevices: [],
+  syncConflicts: [],
+  noteRevisions: [],
+  conflictPolicy: 'auto-merge',
+  showConflictResolver: false,
+
+  // Search
+  savedSearches: [],
+  searchFilters: { sectionIds: [], tags: [], dateRange: {} },
+  searchResultIds: [],
 
   // Preferences
   theme: 'dark',
@@ -382,6 +552,17 @@ export const useAppStore = create<AppState>((set) => ({
   setSharedNotes: (sharedNotes) => set({ sharedNotes }),
   setPendingInvites: (pendingInvites) => set({ pendingInvites }),
 
+  // Team actions
+  setTeams: (teams) => set({ teams }),
+  addTeam: (team) => set((s) => ({ teams: [...s.teams, team] })),
+  removeTeam: (id) => set((s) => ({ teams: s.teams.filter((t) => t.id !== id) })),
+  updateTeam: (id, updates) => set((s) => ({
+    teams: s.teams.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+  })),
+  setActiveTeam: (activeTeamId) => set({ activeTeamId }),
+  setShowCreateTeamModal: (showCreateTeamModal) => set({ showCreateTeamModal }),
+  setShowJoinTeamModal: (showJoinTeamModal) => set({ showJoinTeamModal }),
+
   // Chart actions
   setCharts: (charts) => set({ charts }),
   addChart: (chart) => set((s) => ({ charts: [...s.charts, chart] })),
@@ -389,6 +570,28 @@ export const useAppStore = create<AppState>((set) => ({
   updateChart: (id, updates) => set((s) => ({
     charts: s.charts.map((c) => (c.id === id ? { ...c, ...updates } : c)),
   })),
+
+  // Sharing actions
+  setSharedResources: (sharedResources) => set({ sharedResources }),
+  addSharedResource: (resource) => set((s) => ({ sharedResources: [...s.sharedResources, resource] })),
+  removeSharedResource: (id) => set((s) => ({ sharedResources: s.sharedResources.filter((r) => r.id !== id) })),
+  setActiveShare: (activeShareId) => set({ activeShareId }),
+  setShowShareInviteModal: (showShareInviteModal) => set({ showShareInviteModal }),
+  setShowRevokeConfirm: (showRevokeConfirm) => set({ showRevokeConfirm }),
+
+  // Sync actions
+  setSyncDevices: (syncDevices) => set({ syncDevices }),
+  setSyncConflicts: (syncConflicts) => set({ syncConflicts }),
+  setNoteRevisions: (noteRevisions) => set({ noteRevisions }),
+  setConflictPolicy: (conflictPolicy) => set({ conflictPolicy }),
+  setShowConflictResolver: (showConflictResolver) => set({ showConflictResolver }),
+
+  // Search actions
+  setSavedSearches: (savedSearches) => set({ savedSearches }),
+  addSavedSearch: (search) => set((s) => ({ savedSearches: [...s.savedSearches, search] })),
+  removeSavedSearch: (id) => set((s) => ({ savedSearches: s.savedSearches.filter((s2) => s2.id !== id) })),
+  setSearchFilters: (searchFilters) => set({ searchFilters }),
+  setSearchResultIds: (searchResultIds) => set({ searchResultIds }),
 
   // Preferences
   setTheme: (theme) => set({ theme }),

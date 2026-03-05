@@ -1,8 +1,9 @@
 /**
- * Darklock Secure Notes — TopBar
+ * Darklock Secure Notes — TopBar (Context-Aware)
  *
- * Sleek persistent header with gradient brand mark,
- * keyboard-shortcut search pill, sync status, and icon-based actions.
+ * Adapts to the current screen:
+ * - Workspace: minimal — breadcrumb, note search, tools toggle, lock
+ * - Library/other: full nav with destinations
  */
 
 import React from 'react';
@@ -52,6 +53,69 @@ const ToolsIcon = () => (
   </svg>
 );
 
+const BackIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const LibraryIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <rect x="1.5" y="2" width="4" height="11" rx="1" stroke="currentColor" strokeWidth="1.1" />
+    <rect x="7" y="2" width="3" height="11" rx="1" stroke="currentColor" strokeWidth="1.1" />
+    <rect x="11.5" y="2" width="2" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+  </svg>
+);
+
+const TeamIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <circle cx="5.5" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.1" />
+    <circle cx="10.5" cy="5" r="2" stroke="currentColor" strokeWidth="1.1" />
+    <path d="M1 13c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    <path d="M10 13c0-1.5 1-2.5 2.5-2.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+  </svg>
+);
+
+const ChartIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <rect x="1.5" y="8" width="3" height="5" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+    <rect x="6" y="4" width="3" height="9" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+    <rect x="10.5" y="2" width="3" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.1" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <path d="M2.5 4h10M5 4V3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1M4 4l.5 8a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5L11 4"
+      stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SearchNavIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+    <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.1" />
+    <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+  </svg>
+);
+
+const ShareNavIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <circle cx="4" cy="7.5" r="2" stroke="currentColor" strokeWidth="1.1" />
+    <circle cx="11" cy="3.5" r="2" stroke="currentColor" strokeWidth="1.1" />
+    <circle cx="11" cy="11.5" r="2" stroke="currentColor" strokeWidth="1.1" />
+    <path d="M5.8 6.6l3.4-2.2M5.8 8.4l3.4 2.2" stroke="currentColor" strokeWidth="1" />
+  </svg>
+);
+
+const SyncNavIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+    <path d="M10.5 3L13 5.5 10.5 8" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M2 5.5h11" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+    <path d="M4.5 12L2 9.5 4.5 7" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M13 9.5H2" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+  </svg>
+);
+
 /* ── Component ─────────────────────────────────────────────────── */
 export const TopBar: React.FC = () => {
   const screen = useAppStore((s) => s.screen);
@@ -61,11 +125,16 @@ export const TopBar: React.FC = () => {
   const lockApp = useAppStore((s) => s.lockApp);
   const toggleCommandPalette = useAppStore((s) => s.toggleCommandPalette);
   const toggleToolsSidebar = useAppStore((s) => s.toggleToolsSidebar);
+  const activeSectionId = useAppStore((s) => s.activeSectionId);
+  const sections = useAppStore((s) => s.sections);
 
   const handleLock = () => {
     cryptoService.lock();
     lockApp();
   };
+
+  const isWorkspace = screen === 'workspace';
+  const activeSection = sections.find((s) => s.id === activeSectionId);
 
   const SyncDot = () => {
     const colors: Record<string, string> = {
@@ -98,6 +167,44 @@ export const TopBar: React.FC = () => {
     );
   };
 
+  /* ── Workspace TopBar: minimal, focused ──────────────────── */
+  if (isWorkspace) {
+    return (
+      <header className="topbar topbar--workspace">
+        <div className="topbar-left">
+          <button className="topbar-back-btn" onClick={() => setScreen('library')} title="Back to Library">
+            <BackIcon />
+          </button>
+          <div className="topbar-breadcrumb">
+            <span className="topbar-breadcrumb-root" onClick={() => setScreen('library')}>Library</span>
+            <span className="topbar-breadcrumb-sep">/</span>
+            <span className="topbar-breadcrumb-current">{activeSection?.name || 'Notes'}</span>
+          </div>
+        </div>
+
+        <div className="topbar-center">
+          <button className="topbar-search" onClick={toggleCommandPalette}>
+            <SearchIcon />
+            <span className="topbar-search-text">Search notes…</span>
+            <kbd className="topbar-search-kbd">Ctrl+K</kbd>
+          </button>
+        </div>
+
+        <div className="topbar-right">
+          {storageMode === 'cloud' && <SyncDot />}
+          <EncryptionBadge />
+          <Button variant="ghost" size="sm" onClick={toggleToolsSidebar} tooltip="Toggle tools panel">
+            <ToolsIcon />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleLock} tooltip="Lock vault">
+            <LockIcon />
+          </Button>
+        </div>
+      </header>
+    );
+  }
+
+  /* ── Default TopBar: full navigation ─────────────────────── */
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -111,31 +218,37 @@ export const TopBar: React.FC = () => {
             className={`topbar-nav-item ${screen === 'library' ? 'active' : ''}`}
             onClick={() => setScreen('library')}
           >
-            Library
+            <LibraryIcon /> Library
           </button>
           <button
-            className={`topbar-nav-item ${screen === 'workspace' ? 'active' : ''}`}
-            onClick={() => setScreen('workspace')}
+            className={`topbar-nav-item ${screen === 'search' ? 'active' : ''}`}
+            onClick={() => setScreen('search')}
           >
-            Workspace
+            <SearchNavIcon /> Search
           </button>
           <button
-            className={`topbar-nav-item ${screen === 'collaborators' ? 'active' : ''}`}
-            onClick={() => setScreen('collaborators')}
+            className={`topbar-nav-item ${screen === 'sharing' ? 'active' : ''}`}
+            onClick={() => setScreen('sharing')}
           >
-            Team
+            <ShareNavIcon /> Sharing
+          </button>
+          <button
+            className={`topbar-nav-item ${screen === 'sync' ? 'active' : ''}`}
+            onClick={() => setScreen('sync')}
+          >
+            <SyncNavIcon /> Sync
           </button>
           <button
             className={`topbar-nav-item ${screen === 'charts' ? 'active' : ''}`}
             onClick={() => setScreen('charts')}
           >
-            Charts
+            <ChartIcon /> Charts
           </button>
           <button
             className={`topbar-nav-item ${screen === 'trash' ? 'active' : ''}`}
             onClick={() => setScreen('trash')}
           >
-            Trash
+            <TrashIcon /> Trash
           </button>
         </nav>
       </div>
@@ -150,19 +263,10 @@ export const TopBar: React.FC = () => {
 
       <div className="topbar-right">
         {storageMode === 'cloud' && <SyncDot />}
-
         <EncryptionBadge />
-
-        {screen === 'workspace' && (
-          <Button variant="ghost" size="sm" onClick={toggleToolsSidebar} tooltip="Toggle tools panel">
-            <ToolsIcon />
-          </Button>
-        )}
-
         <Button variant="ghost" size="sm" onClick={() => setScreen('settings')} tooltip="Settings">
           <SettingsIcon />
         </Button>
-
         <Button variant="ghost" size="sm" onClick={handleLock} tooltip="Lock vault">
           <LockIcon />
         </Button>
