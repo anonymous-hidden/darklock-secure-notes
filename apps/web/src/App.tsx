@@ -16,7 +16,6 @@ import { Trash } from './pages/Trash';
 import { Charts } from './pages/Charts';
 import { Search } from './pages/Search';
 import { Sharing } from './pages/Sharing';
-import { Sync } from './pages/Sync';
 import { CommandPalette } from '@darklock/ui';
 import { cryptoService } from './services/crypto';
 
@@ -30,7 +29,14 @@ const buildCommands = (
   { id: 'search', label: 'Search Notes', shortcut: 'Ctrl+Shift+F', action: () => store.setScreen('search') },
   { id: 'library', label: 'Go to Library', shortcut: 'Ctrl+L', action: () => store.setScreen('library') },
   { id: 'sharing', label: 'Manage Sharing', action: () => store.setScreen('sharing') },
-  { id: 'sync', label: 'Sync Status', action: () => store.setScreen('sync') },
+  {
+    id: 'sync',
+    label: 'Sync Settings',
+    action: () => {
+      store.setSettingsTab('sync');
+      store.setScreen('settings');
+    },
+  },
   { id: 'settings', label: 'Open Settings', action: () => store.setScreen('settings') },
   { id: 'lock', label: 'Lock Vault', shortcut: 'Ctrl+Shift+L', action: () => { cryptoService.lock(); store.lockApp(); } },
   { id: 'toggle-sidebar', label: 'Toggle Sidebar', action: () => store.toggleNav() },
@@ -42,6 +48,8 @@ const buildCommands = (
 /* ------------------------------------------------------------------ */
 export const App: React.FC = () => {
   const screen = useAppStore((s) => s.screen);
+  const setScreen = useAppStore((s) => s.setScreen);
+  const setSettingsTab = useAppStore((s) => s.setSettingsTab);
   const isLocked = useAppStore((s) => s.isLocked);
   const storageMode = useAppStore((s) => s.storageMode);
   const commandPaletteOpen = useAppStore((s) => s.commandPaletteOpen);
@@ -106,6 +114,13 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  // Keep backward compatibility with old Sync route by opening Settings > Sync.
+  useEffect(() => {
+    if (screen !== 'sync') return;
+    setSettingsTab('sync');
+    setScreen('settings');
+  }, [screen, setScreen, setSettingsTab]);
+
   /* ---------- Clipboard auto-clear (30 s after copy) ----------
    * Snapshots the clipboard immediately after copy. 30 s later it
    * only clears if the clipboard STILL holds that same text —
@@ -167,8 +182,6 @@ export const App: React.FC = () => {
         return <Search />;
       case 'sharing':
         return <Sharing />;
-      case 'sync':
-        return <Sync />;
       default:
         return <Library />;
     }
@@ -180,7 +193,8 @@ export const App: React.FC = () => {
 
       {commandPaletteOpen && (
         <CommandPalette
-          commands={buildCommands(useAppStore.getState())}
+          isOpen={commandPaletteOpen}
+          actions={buildCommands(useAppStore.getState())}
           onClose={toggleCommandPalette}
           placeholder="Type a command…"
         />
